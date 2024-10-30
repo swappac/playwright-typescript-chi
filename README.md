@@ -1,5 +1,13 @@
 # playwright-typescript-chi
 
+Clone the project and run locally using below commands
+
+npx playwright test
+Runs the end-to-end tests.
+
+npx playwright test --ui
+Starts the interactive UI mode.
+
 Test Plan for Saucelabs
 Test Plan ID - v1
 Prepared by: Swapna
