@@ -2,11 +2,14 @@
 
 Clone the project and run locally using below commands
 
-npx playwright test
-Runs the end-to-end tests.
+Run test using the command below
+
+    npx playwright test
+    
 
 npx playwright test --ui
-Starts the interactive UI mode.
+
+    Starts the interactive UI mode.
 
 Test Plan for Saucelabs
 Test Plan ID - v1
