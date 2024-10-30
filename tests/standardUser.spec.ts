@@ -1,77 +1,77 @@
-import { test, expect } from '@playwright/test';
+import {expect} from '@playwright/test';
+import test from './util/BaseTest';
+import {testdata} from "../testdata";
 
-import { InventoryPage } from './pages/InventoryPage';
-import { IndexPage } from './pages/IndexPage';
+test.describe("saucelabs", async () => {
+    test.beforeEach(async ({page}) => {
 
+        await page.goto("https://www.saucedemo.com/v1/index.html")
+        console.log(testdata.standard.username);
+        console.log(testdata.lockedOut.username);
 
-test.describe("saucelabs", async()=> {
-  let indexPage: IndexPage;
-  let inventoryPage: InventoryPage;
+    });
 
-  test.beforeEach(async ({ page }) => {
-    indexPage = new IndexPage(page);
-    inventoryPage = new InventoryPage(page);
-  })
+    test("Login as Standard user", async ({page, indexPage}) => {
+        //When user is logged in as standard user
+        await indexPage.loginToAccount(testdata.standard.username, testdata.standard.password)
 
-  test("Login as Standard user", async({page}) =>{
-    //Given Navigate to the application
-    await page.goto("https://www.saucedemo.com/v1/index.html")
+        //Then user is navigated to inventory page
+        await expect(page.getByText('Products')).toBeVisible();
+    });
 
-    //When user is logged in as standard user
-    await indexPage.loginToAccount('standard_user', 'secret_sauce')
- 
+    test("Login as locked user", async ({page, indexPage}) => {
+        //When user is logged in as standard user
+        await indexPage.loginToAccount(testdata.lockedOut.username, testdata.lockedOut.password)
 
-    //Then user is navigated to inventory page
-    await expect(page.getByText('Products')).toBeVisible();
-})
+        //Then user is navigated to inventory page
+        await expect(page.getByText('Products')).not.toBeVisible();
+    });
 
-test("user can click on product and go back to inventory page", async({page}) =>{
-  //Given Navigate to the application
-  await page.goto("https://www.saucedemo.com/v1/index.html")
-  
-  //When user is logged in as standard user
-   await indexPage.loginToAccount('standard_user', 'secret_sauce');
-  
-   //And user add an item to the cart
-   await page.getByRole('link', { name: 'Sauce Labs Backpack' }).click();
-   await page.getByRole('button', { name: '<- Back' }).click();
-   expect(page.url()).toContain('/inventory');
-})
+    test("user can click on product and go back to inventory page", async ({page, indexPage}) => {
+        //Given Navigate to the application
+        await page.goto("https://www.saucedemo.com/v1/index.html")
 
+        //When user is logged in as standard user
+        await indexPage.loginToAccount(testdata.standard.username, testdata.standard.password);
 
-test("Standard user can add products to cart", async({page}) =>{
-//Given Navigate to the application
-await page.goto("https://www.saucedemo.com/v1/index.html")
-
-//When user is logged in as standard user
- await indexPage.loginToAccount('standard_user', 'secret_sauce');
-
- //And user add an item to the cart
-
- await inventoryPage.addItemsToCart();
-
- //And user clicks on cart
- await inventoryPage.clickOnCart();
- 
-// And user can checkout or Continue Shopping
-await expect(page.getByRole('link', { name: 'CHECKOUT' })).toBeVisible();
-await expect(page.getByRole('link', { name: 'Continue Shopping' })).toBeVisible();
+        //And user add an item to the cart
+        await page.getByRole('link', {name: 'Sauce Labs Backpack'}).click();
+        await page.getByRole('button', {name: '<- Back'}).click();
+        expect(page.url()).toContain('/inventory');
+    })
 
 
- });
+    test("Standard user can add products to cart", async ({page, inventoryPage, indexPage, cartPage}) => {
+        //Given Navigate to the application
+        await page.goto("https://www.saucedemo.com/v1/index.html")
 
-test("Standard user can remove an item from cart", async({page})=>{
+        //When user is logged in as standard user
+        await indexPage.loginToAccount(testdata.standard.username, testdata.standard.password);
 
-//Given Navigate to the application
-await page.goto("https://www.saucedemo.com/v1/index.html")
+        //And user add an item to the cart
 
-//When user is logged in as standard user
- await indexPage.loginToAccount('standard_user', 'secret_sauce');
+        await inventoryPage.addItemsToCart();
 
-//Then user can remove na item from cart
- await inventoryPage.addItemsToCart();
- await inventoryPage.removeItemFromCart();
+        //And user clicks on cart
+        await cartPage.clickOnCart();
 
-});
+        //And user can check out or Continue Shopping
+        await expect(page.getByRole('link', {name: 'CHECKOUT'})).toBeVisible();
+        await expect(page.getByRole('link', {name: 'Continue Shopping'})).toBeVisible();
+    });
 
+    test("Standard user can remove an item from cart", async (
+        {page,
+            inventoryPage,
+            indexPage}) => {
+        //Given Navigate to the application
+        await page.goto("https://www.saucedemo.com/v1/index.html")
+
+        //When user is logged in as standard user
+        await indexPage.loginToAccount(testdata.standard.username, testdata.standard.password);
+
+        //Then user can remove item from cart
+        await inventoryPage.addItemsToCart();
+        await inventoryPage.removeItemFromCart();
+    });
 });

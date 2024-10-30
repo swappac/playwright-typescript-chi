@@ -1,8 +1,8 @@
-import { Page } from "@playwright/test";
+import {Page} from "@playwright/test";
 
 export class IndexPage {
     page: Page;
-    constructor(page: Page){
+    constructor(page: Page) {
         this.page = page;
     }
 
@@ -10,20 +10,19 @@ export class IndexPage {
         await this.enterUsername(username);
         await this.enterPassword(password);
         await this.clickOnLogin();
-       
-      }
 
-    async enterUsername(username: string){
+    }
+
+    async enterUsername(username: string) {
         await this.page.locator("data-test=username").fill(username);
     }
 
-    async enterPassword(password: string){
+    async enterPassword(password: string) {
         await this.page.locator("data-test=password").fill(password);
     }
 
     async clickOnLogin() {
         await this.page.locator('#login-button').click();
-       }
-
+    }
 
 }
