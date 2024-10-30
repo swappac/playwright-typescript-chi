@@ -23,8 +23,8 @@ test.describe("saucelabs", async () => {
         //When user is logged in as standard user
         await indexPage.loginToAccount(testdata.lockedOut.username, testdata.lockedOut.password)
 
-        //Then user is navigated to inventory page
-        await expect(page.getByText('Products')).not.toBeVisible();
+        //Then assert lockedOut text is displayed
+        await expect(page.locator('[data-test="error"]')).toBeVisible();
     });
 
     test("user can click on product and go back to inventory page", async ({page, indexPage}) => {
